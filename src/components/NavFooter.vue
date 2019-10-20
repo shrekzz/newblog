@@ -1,0 +1,11 @@
+<template>
+    <footer>
+        <p>Copyright &copy; 2018 Node</p>
+        <p>Powered by Express</p>
+    </footer>
+</template>
+<script>
+export default {
+    
+}
+</script>
