@@ -129,6 +129,7 @@ header{
     background-image: url("../images/banner.jpg");
     background-position: center;
     margin-bottom: 25px;
+    width: 100%;
 }
 
 header h1{
@@ -148,38 +149,63 @@ header h1{
     margin-bottom: 25px;
 }
 
-aside{
-    width: 180px;
-    padding: 9px;
-    border: 1px solid #c0c0c0;
-    float: left;
-    min-height: 450px;
-    height: 100%;
+    aside{
+        width: 180px;
+        padding: 9px;
+        border: 1px solid #c0c0c0;
+        float: left;
+        min-height: 450px;
+        height: 100%;
+    }
+
+    aside ul li{
+        list-style: none;
+        height: 30px;
+        text-align: center;
+
+    }
+
+    aside ul li a{
+        font-size: 16px;
+        line-height: 30px;
+    }
+
+    aside ul li a:hover{
+        color: #183d8e;
+    }
+
+    .main-aside-avatar{
+        margin-bottom: 10px;
+    }
+
+    .main-aside-avatar img{
+        width: 100%;
+    }
+
+
+
+
+
+@media screen and (max-device-width:960px){
+    aside{
+        width: 100%;
+        padding: 9px;
+        border: 1px solid #c0c0c0;
+        
+        height: 200px;
+        }
+        aside ul li{
+            list-style: none;
+            height: 30px;
+            text-align: center;
+            float: left;
+        }
+        .main-aside-avatar img{
+            width: 10%;
+        }
 }
 
-aside ul li{
-    list-style: none;
-    height: 30px;
-    text-align: center;
 
-}
-
-aside ul li a{
-    font-size: 16px;
-    line-height: 30px;
-}
-
-aside ul li a:hover{
-    color: #183d8e;
-}
-
-.main-aside-avatar{
-    margin-bottom: 10px;
-}
-
-.main-aside-avatar img{
-    width: 100%;
-}
 
 .main-articles{
     margin-left: 220px;
