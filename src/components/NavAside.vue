@@ -1,42 +1,102 @@
 <template>
     <aside>
-        <section class="main-aside-avatar">
-            <img src="./../assets/images/avatar.jpg" alt="">
-        </section>
-        <el-row>
-            <el-col :span="24">
-                <el-menu  class="el-menu-vertical-demo" router background-color="#f0f0f0"> 
-                    <el-menu-item index="/">
-                        <span slot="title">博客首页</span>
-                    </el-menu-item>
-                    <el-menu-item index="/edit">
-                        <span slot="title">撰写文章</span>
-                    </el-menu-item>
-                    <el-menu-item index="/about">
-                        <span slot="title">关于博客</span>
-                    </el-menu-item>
-                    <el-menu-item index="/" v-if="flag == true"  @click="logout">
-                        <span slot="title">登出博客</span>
-                    </el-menu-item>
-                    <el-menu-item index="/login" v-if="flag == false">
-                        <span slot="title">登录博客</span>
-                    </el-menu-item>
-                </el-menu>
-            </el-col>
-        </el-row>
+        <el-card class="box-card" style="text-align: center;">
+            <!-- <el-row>
+                <a href="#"><el-avatar title="上传头像" shape="square" :size="100" :fit="fill" :src="url"></el-avatar></a>
+            </el-row> -->
+            <el-row>
+                <el-upload
+                class="avatar-uploader"
+                v-show="(user != null)"
+                action='/users/upload'
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <el-avatar v-if="avatarUrl" :src="avatarUrl" shape="square" :size="100"  ></el-avatar>
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </el-row>
+            <el-row><h4>{{user}}</h4></el-row>
+            <el-row>
+                <el-button type="primary" @click="edit">写博客</el-button>
+                <el-button type="primary" v-show="user != null ">草稿箱</el-button>
+            </el-row>
+		</el-card>
     </aside>
 </template>
 <script>
+
+import axios from 'axios'
+
 export default {
     computed:{
-        flag () {
-            return this.$store.state.flag;
+        user () {
+            return this.$store.state.user;
+        },
+        avatarUrl(){
+            return this.$store.state.avatarUrl
+        }
+    },
+    data(){
+        return{
+         
+            
         }
     },
     methods:{
-        logout(){
-            this.$store.commit("updateFlag", false);
+        edit(){
+            this.$router.push('/edit')
+        },
+        handleAvatarSuccess(res, file) {
+            let imageUrl =  res.url;
+            this.$store.commit("updateAvatar", imageUrl);
+            this.saveAvatar()
+        
+        },
+        beforeAvatarUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG) {
+            this.$message.error('上传头像图片只能是 JPG 格式!');
+            }
+            if (!isLt2M) {
+            this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            return isJPG && isLt2M;
+        },
+        saveAvatar(){
+            axios.post('/users/saveAvatar',{
+                authorName: this.$store.state.user, 
+                avatarUrl: this.$store.state.avatarUrl
+                }).then(response => {
+                    let res = response.data
+                    if(res.status == 0){
+                        return
+                    }
+                })
         }
     }
 }
 </script>
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+  }
+ 
+</style>

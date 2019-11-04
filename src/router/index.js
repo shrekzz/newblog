@@ -5,6 +5,7 @@ import Index from './../views/Index'
 import Article from './../views/Article'
 import Edit from './../views/Edit'
 import About from './../views/About'
+import MyArticle from './../views/MyArticle'
 
 
 Vue.use(Router)
@@ -35,6 +36,11 @@ export default new Router({
       path: '/about',
       name: 'About',
       component: About
+    },
+    {
+      path: '/myarticle',
+      name: 'MyArticle',
+      component: MyArticle
     }
 
   ]

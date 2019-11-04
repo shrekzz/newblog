@@ -8,6 +8,7 @@ import ElementUI from 'element-ui';
 import mavonEditor from 'mavon-editor'
 
 
+
 import 'element-ui/lib/theme-chalk/index.css';
 import indiniteScroll from 'vue-infinite-scroll'
 import '../theme/index.css'
@@ -22,13 +23,18 @@ Vue.use(indiniteScroll)
 Vue.use(mavonEditor)
 
 
+
 const store = new Vuex.Store({
   state: {
-    flag: false
+    user: null,
+    avatarUrl:''
   },
   mutations: {
-    updateFlag(state, flag){
-      state.flag = flag
+    updateFlag(state, user){
+      state.user = user
+    },
+    updateAvatar(state, avatarUrl){
+      state.avatarUrl = avatarUrl
     }
   }
 })
