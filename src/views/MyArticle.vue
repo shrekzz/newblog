@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<nav-header @Logout="Logout"></nav-header>
+		<nav-header></nav-header>
 		<el-row>
-			<el-col :span="19">
+			<el-col :span="19" :xs="{span:24}" >
 				<div class="container">
 					<el-card class="box-card" shadow="hover" v-for="(item,idx) in articles" :key="idx">
 						<span class="p-top"><a href="#">{{item.articleAuthor}}</a> · {{item.articleTime}}</span>
@@ -18,7 +18,7 @@
 							<el-divider direction="vertical"></el-divider>
 							<span><a href="javascript:;" @click="open(item)">删除</a></span> 
 						</div>
-						<span class="p-bottom"><i class="el-icon-chat-square" ></i>  1,000 条评论</span>
+						<span class="p-bottom"><i class="el-icon-view" ></i> 浏览 {{item.articleClick}}</span>
 					</el-card>
 					<div
 					class="loadMore"
@@ -30,7 +30,7 @@
 				</div>
 				</div>
 			</el-col>
-			<el-col :span="5">
+			<el-col :span="5" :xs="{ span: 0}">
 				<nav-aside></nav-aside>
 			</el-col>
 		</el-row>
@@ -44,8 +44,6 @@
 
 <script>
 import axios from "axios";
-import "./../assets/css/main.css";
-import "./../assets/css/normalize.css";
 
 import NavHeader from "@/components/NavHeader.vue";
 import NavFooter from "@/components/NavFooter.vue";

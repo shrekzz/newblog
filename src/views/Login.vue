@@ -48,7 +48,6 @@
 <script>
 
 import axios from "axios";
-import './../assets/css/main.css'
 import './../assets/css/normalize.css'
 
 export default { 

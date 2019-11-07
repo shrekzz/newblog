@@ -7,7 +7,9 @@ import router from './router'
 import ElementUI from 'element-ui';
 import mavonEditor from 'mavon-editor'
 
-
+import "./assets/css/main.css";
+// import "./assets/css/normalize.css";
+import "./assets/css/main.scss"
 
 import 'element-ui/lib/theme-chalk/index.css';
 import indiniteScroll from 'vue-infinite-scroll'
