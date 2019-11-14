@@ -8,11 +8,7 @@
                     <el-card class="box-card" shadow="hover" v-show="articles.length == 0"><p style="text-align:center">草稿箱为空</p></el-card>
 					<el-card class="box-card" shadow="hover" v-for="(item,idx) in articles" :key="idx">
 						<span class="p-top"><a href="#">{{item.articleAuthor}}</a> · {{item.articleTime}}</span>
-						<h3>
-							<router-link
-								:to="{path:'article', query: {'articleID': item.articleID} }"
-							>{{item.articleTitle}}</router-link>
-						</h3>
+						<h3>{{item.articleTitle}}</h3>
 						<p>{{item.articleContent.substr(0,100)}}</p>
 						<br>
 						<div class="edit">
@@ -20,7 +16,6 @@
 							<el-divider direction="vertical"></el-divider>
 							<span><a href="javascript:;" @click="open(item)">删除</a></span> 
 						</div>
-						<span class="p-bottom"><i class="el-icon-view" ></i> 浏览 {{item.articleClick}}</span>
 					</el-card>
 					<div
 					class="loadMore"
@@ -80,7 +75,7 @@ export default {
 				user: this.user,
 				page: this.page,
                 pageSize: this.pageSize,
-                draftFlag: 1
+                draft: 'draft'
 			};
 			this.loading = true;
 			axios.get("/index", { params: param }).then(response => {
