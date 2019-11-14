@@ -1,7 +1,8 @@
 <template>
     <footer>
-        <p>Copyright &copy; 2018 Node</p>
-        <p>Powered by Express</p>
+        <p>粤ICP备19140311</p>
+        <p>Copyright &copy; 2019 Shrekz</p>
+       y
     </footer>
 </template>
 <script>

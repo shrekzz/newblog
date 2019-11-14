@@ -10,7 +10,7 @@
                     <mavon-editor ref=md @imgAdd="$imgAdd" @change="autosave" v-model="content" class="editor" :ishljs="true"></mavon-editor>
                     <p v-show="isautosave">自动保存成功...</p>
                     <p class="savebtn">
-                        <el-button type="primary" @click="save();this.centerDialogVisible = true" v-bind:class="{'is-disabled': !(title && content)}">保&emsp;存</el-button>
+                        <el-button type="primary" @click="centerDialogVisible = true;save(0)" v-bind:class="{'is-disabled': !(title && content)}">发&emsp;布</el-button>
                     </p>
                 </el-card>
             </el-col>
@@ -70,12 +70,13 @@
                     })
                 }
             },
-            save() {
+            save(draftFlag) {
                 var articleID = this.$route.query.articleID
                 axios.post('/users/editArticle', {
                     title: this.title,
                     content: this.content,
-                    articleID: articleID
+                    articleID: articleID,
+                    draftFlag: draftFlag
                 }).then(response => {
                     let res = response.data
                     if (res.status == 0) {
@@ -115,7 +116,7 @@
             autosave(){
                 let that = this
                 setTimeout(function(){
-                    that.save()
+                    that.save(1)
                     that.isautosave = true
                 },5000)
             }

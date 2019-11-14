@@ -25,7 +25,7 @@
                                 
                                 <el-menu-item  index="/edit"><span>写博客</span></el-menu-item>
                                 <el-menu-item  index="/homepage">个人中心</el-menu-item>
-                                <el-menu-item  index="/drafts">草稿箱</el-menu-item>
+                                <el-menu-item  index="/draft">草稿箱</el-menu-item>
                                 <el-menu-item  index="/" v-if="user != null"  @click="Logout">
                                     <span slot="title">退出博客</span>
                                 </el-menu-item>

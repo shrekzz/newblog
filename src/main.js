@@ -7,8 +7,8 @@ import router from './router'
 import ElementUI from 'element-ui';
 import mavonEditor from 'mavon-editor'
 
-import "./assets/css/main.css";
-// import "./assets/css/normalize.css";
+// import "./assets/css/main.css";
+import "./assets/css/normalize.css";
 import "./assets/css/main.scss"
 
 import 'element-ui/lib/theme-chalk/index.css';
@@ -51,5 +51,13 @@ new Vue({
   data(){
     return{
     }
+  },
+  created(){
+    
+    router.beforeEach((to, from, next) => {
+      window.document.title = to.meta.title? to.meta.title : defaultTitle;
+      next()
+    })
+    
   }
 })

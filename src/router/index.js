@@ -1,12 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from './../views/Login'
-import Index from './../views/Index'
-import Article from './../views/Article'
-import Edit from './../views/Edit'
-import About from './../views/About'
-import MyArticle from './../views/MyArticle'
-
 
 Vue.use(Router)
 
@@ -15,33 +8,60 @@ export default new Router({
     {
       path: '/',
       name: 'Index',
-      component: Index
+      component: ()=> import ('./../views/Index') ,
+      meta: {
+        title:'blog'
+      }
     }, 
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: ()=> import ('./../views/Login') ,
+      meta:{
+        title: '欢迎'
+      }
     },
     {
       path: '/article',
       name: 'Article',
-      component: Article
+      component: ()=> import ('./../views/Article') ,
+      meta:{
+        title: '文章内容'
+      }
     },
     {
       path: '/edit',
       name: 'Edit',
-      component: Edit
+      component: ()=> import ('./../views/Edit') ,
+      meta:{
+        title: '编辑'
+      }
     },
     {
       path: '/about',
       name: 'About',
-      component: About
+      component: ()=> import ('./../views/About') ,
+      meta:{
+        title: '关于博客'
+      }
     },
     {
       path: '/myarticle',
       name: 'MyArticle',
-      component: MyArticle
+      component: ()=> import ('./../views/MyArticle') ,
+      meta:{
+        title: '我的文章'
+      }
+    },
+    {
+      path: '/draft',
+      name: 'Draft',
+      component: ()=> import ('./../views/Draft') ,
+      meta:{
+        title: '草稿箱'
+      }
     }
 
   ]
 })
+

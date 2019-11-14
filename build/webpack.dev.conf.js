@@ -42,7 +42,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll,
-    }
+    },
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -55,7 +55,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
-      inject: true
+      inject: true,
+      favicon: './static/favicon.ico'
     }),
     // copy custom static assets
     new CopyWebpackPlugin([

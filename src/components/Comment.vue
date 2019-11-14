@@ -34,14 +34,14 @@
 							class="sort-default"
 							@click="changeSort(0);getComment(sortFlag)"
 							v-bind:class="{'sort':sortFlag == 0}"
-						>按时间</span>
+						>按时间↑</span>
 						<el-divider direction="vertical"></el-divider>
 						<span
 							class="sort-default"
 							type="text"
 							@click="changeSort(1);getComment(sortFlag)"
 							v-bind:class="{'sort':sortFlag == 1}"
-						>按热度</span>
+						>按时间↓</span>
 					</div>
 				</el-col>
 			</el-row>
@@ -62,15 +62,9 @@
 							<span class="time">{{ item.commentTime }}</span>
 						</p>
 					</el-col>
-					<el-col :push="18" :span="5" :xs="{push:13,span:8}">
+					<el-col :push="20" :span="2" :xs="{push:17,span:6}">
 						<p>
 							<span class="answerlike" @click="toggle(item.commentID)">回复</span>
-							<el-divider direction="vertical"></el-divider>
-							<span
-								class="answerlike"
-								v-bind:class="{ 'liked': (item.likeFlag && (item.authorName == user))}"
-								@click="like(item.commentID, item.likeFlag)"
-							>点赞({{item.likes}})</span>
 						</p>
 					</el-col>
 				</el-row>
@@ -78,7 +72,7 @@
 					<el-col :push="3">
 						<div class="add-child-comment">
 							<el-input v-model="childInput" style="width: 80%;" placeholder="请输入内容"></el-input>
-							<el-button type="primary" style="width: 18%;" @click="publish(item.commentID)">评论</el-button>
+							<el-button type="primary" style="width: 18%;" @click="publish(item.commentID)" v-bind:class="{ 'is-disabled' : !childInput }">评论</el-button>
 						</div>
 					</el-col>
 				</el-row>
@@ -103,15 +97,19 @@
 										<span class="child-time">{{child.commentTime}}</span>
 									</p>
 								</el-col>
-								<el-col :push="19" :span="5" :xs="{push:14}">
+								<el-col :push="20" :span="2" :xs="{push:16}">
 									<p>
-										<span
-											class="child-like"
-											v-bind:class="{ 'child-liked': child.likeFlag }"
-											@click="like(child.commentID, child.likeFlag)"
-										>点赞({{child.likes}})</span>
+										<span class="child-anwser" @click="toggle(child.commentID)">回复</span>
 									</p>
 								</el-col>
+								<el-row v-show="(child.commentID == currentID)">
+								<el-col :push="1">
+									<div class="add-grandchild-comment">
+										<el-input v-model="childInput" style="width: 80%;" placeholder="请输入内容"></el-input>
+										<el-button type="primary" style="width: 18%;" @click="publish(item.commentID)" v-bind:class="{ 'is-disabled' : !childInput }">评论</el-button>
+									</div>
+								</el-col>
+				</el-row>
 							</el-row>
 							<!-- </div> -->
 						</el-card>
@@ -137,12 +135,14 @@ export default {
 	},
 	methods: {
 		toggle(id) {
-			//第一次点回复 cId 等于传进来的id ，再点同一个回复，cId置空
+			//第一次点回复 cId 等于传进来的id ，再点同一个回复，cId置空         
 			if (id == this.currentID) {
 				this.currentID = "";
+				
 				return;
 			}
 			this.currentID = id;
+			this.childInput = "";
 		},
 		getComment(sort) {
 			let articleID = this.$route.query.articleID;
@@ -159,43 +159,32 @@ export default {
 				});
 		},
 		publish(parentID) {
-			let articleID = this.$route.query.articleID;
-			let commentContent = this.inputContent;
-			let parentComment = parentID;
-			let avatar = this.$store.state.avatarUrl;
-			if (parentComment) {
-				commentContent = this.childInput;
+			if(this.$store.state.user){
+				let articleID = this.$route.query.articleID;
+				let commentContent = this.inputContent;
+				let parentComment = parentID;
+				let avatar = this.$store.state.avatarUrl;
+				if (parentComment) {
+					commentContent = this.childInput;
+				}
+				axios
+					.post("/users/publish", {
+						articleID: articleID,
+						commentContent: commentContent,
+						parentComment: parentComment,
+						avatar: avatar
+					})
+					.then(response => {
+						let res = response.data;
+						if (res.status == 0) {
+							this.inputContent = "";
+							this.childInput = "";
+							this.getComment();
+						}
+					});
+			}else{
+				this.$message('您还没有登录，无法评论！');
 			}
-			axios
-				.post("/users/publish", {
-					articleID: articleID,
-					commentContent: commentContent,
-					parentComment: parentComment,
-					avatar: avatar
-				})
-				.then(response => {
-					let res = response.data;
-					if (res.status == 0) {
-						this.inputContent = "";
-						this.childInput = "";
-						this.getComment();
-					}
-				});
-		},
-		like(commentID, likeFlag) {
-			likeFlag = likeFlag ^ 1;
-			axios
-				.post("/users/like", {
-					commentID: commentID,
-					likeFlag: likeFlag
-				})
-				.then(response => {
-					let res = response.data;
-					if (res.status == 0) {
-						console.log("1");
-					}
-				});
-			this.getComment();
 		},
 		changeSort(sort) {
 			this.sortFlag = sort;
@@ -242,26 +231,20 @@ export default {
 .comment-content {
 	line-height: 25px;
 }
-.liked {
-	color: #eb7350;
-	font-size: 13px;
-}
+
 
 .time {
 	color: darkblue;
 	font-size: 13px;
 }
 
-.child-like {
-	cursor: pointer;
+.child-anwser {
 	color: darkblue;
 	font-size: 12px;
+	cursor: pointer;
 }
 
-.child-liked {
-	color: #eb7350;
-	font-size: 12px;
-}
+
 .child-time {
 	color: darkblue;
 	font-size: 12px;
@@ -301,6 +284,13 @@ export default {
 .add-child-comment {
 	background-color: #dcdfe6;
 	width: 82%;
+	height: 50px;
+	padding-top: 10px;
+	padding-left: 10px;
+}
+.add-grandchild-comment {
+	background-color: #dcdfe6;
+	width: 95%;
 	height: 50px;
 	padding-top: 10px;
 	padding-left: 10px;

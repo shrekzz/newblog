@@ -19,7 +19,7 @@
             <el-row><h4>{{user}}</h4></el-row>
             <el-row>
                 <el-button type="primary" @click="edit">写博客</el-button>
-                <el-button type="primary" v-show="user != null ">草稿箱</el-button>
+                <el-button type="primary" v-show="user != null " @click="draft">草稿箱</el-button>
             </el-row>
 		</el-card>
     </aside>
@@ -46,6 +46,9 @@ export default {
     methods:{
         edit(){
             this.$router.push('/edit')
+        },
+        draft(){
+            this.$router.push('/draft')
         },
         handleAvatarSuccess(res, file) {
             let imageUrl =  res.url;
