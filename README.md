@@ -1,6 +1,6 @@
 # newblog
 
-> A Vue.js project
+> 个人博客系统
 
 ## Build Setup
 
