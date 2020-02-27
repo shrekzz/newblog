@@ -1,58 +1,61 @@
 <template>
     <header>
+        <nav-dialog ref=child></nav-dialog>
 		<div class="fixed">
-			<el-row>
-				<el-col :span="22" :xs="{span:19}">
-					<el-menu :default-active="activeIndex" router class="el-menu-demo" mode="horizontal"  >
-						<el-menu-item index="/">首页</el-menu-item>
-						<el-menu-item index="/myarticle" v-show="user != null">我的文章</el-menu-item>
-						<el-menu-item index="/about">关于博客</el-menu-item>
-						
-					</el-menu>
-				</el-col>
-				<el-col :span="2" :xs="{span:5}">
-					<el-menu class="el-menu-demo" router mode="horizontal" active-text-color="#fff">
-                        <el-menu-item index="/" v-if="user != null&&screenWidth > 768"  @click="Logout">
-                            <span slot="title">退出博客</span>
-                        </el-menu-item>
-                        <el-menu-item index="/login" v-if="user == null&&screenWidth > 768">
-                            <span slot="title">登录博客</span>
-                        </el-menu-item>
-                        <el-submenu index="m" v-show="screenWidth < 768">
-                            <!-- <span slot="title"><i class="el-icon-menu"></i></span> -->
-                            <template slot="title"><el-avatar :src="avatarUrl"></el-avatar></template>
-                            <el-menu-item-group>
-                                
-                                <el-menu-item  index="/edit"><span>写博客</span></el-menu-item>
-                                <el-menu-item  index="/homepage">个人中心</el-menu-item>
-                                <el-menu-item  index="/draft">草稿箱</el-menu-item>
-                                <el-menu-item  index="/" v-if="user != null"  @click="Logout">
-                                    <span slot="title">退出博客</span>
-                                </el-menu-item>
-                                <el-menu-item  index="/login" v-if="user == null">
-                                    <span slot="title">登录博客</span>
-                                </el-menu-item> 
-                            </el-menu-item-group>
-                        </el-submenu>
-					</el-menu>
-				</el-col>
-			</el-row>
+            <div class="head">
+                <div class="nav">
+                    <router-link class="nav-item" active-class="activeClass" exact to="/" tag="span">首页</router-link>
+                    <router-link class="nav-item" active-class="activeClass" to="/myarticle"  tag="span" v-show="user != null">我的文章</router-link>
+                    <router-link class="nav-item" active-class="activeClass" to="/about"  tag="span">关于博客</router-link>
+                </div>
+                <div class="action">
+                    <div class="action-item" style="width:180px;"><el-input placeholder="搜索" v-model="query"><el-button slot="append" icon="el-icon-search" @click="search"></el-button></el-input></div>
+                    <router-link class="action-item" to="/edit" tag="div">写文章</router-link> 
+                    <div class="action-item" v-if="user == null"><span @click="opendialog">|&emsp;登录</span> · <span @click="openRegist">注册</span></div>
+                    <el-popover
+                        trigger="click"
+                        visible-arrow:false
+                    >
+                        <div>
+                            <router-link tag="div" class="user" to="/edit" >&emsp;写文章</router-link>
+                            <router-link tag="div" class="user" to="/draft" >&emsp;草稿</router-link>
+                            <router-link tag="div" class="user" :to="{ path: `/user/${userID}` }" >&emsp;我的主页</router-link>
+                            <router-link tag="div" class="user" :to="{ path: `/user/${userID}/likes` }"  >&emsp;我赞过的</router-link> 
+                            <router-link tag="div" class="user" to="/settings"  >&emsp;设置</router-link> 
+                            <div class="user" @click="Logout">&emsp;退出</div>
+                        </div>
+                        <el-avatar slot="reference"  :src="avatarUrl" v-if="user !== null" />
+                    </el-popover>
+                </div>
+            </div>
 		</div>
 		<div class="empty"></div>
 	</header>
+    
 </template>
 <script>
-import axios from "axios";
+import NavDialog from "@/components/NavDialog"
+
 export default {
+    components:{
+        NavDialog,
+        
+    },
+
     data(){
         return{
             activeIndex: '/',
-            screenWidth: document.body.clientWidth
+            screenWidth: document.body.clientWidth,
+            loginStatus: 'login',
+            query: ''
         }
     },
     computed:{
         user () {
-            return this.$store.state.user;
+            return this.$store.state.user
+        },
+        userID (){
+            return this.$store.state.userID
         },
         avatarUrl(){
             return this.$store.state.avatarUrl
@@ -86,7 +89,10 @@ export default {
     },
     methods:{
         checklogin(){
-            axios.get("/users/checklogin").then(response => {
+            let param = {token:localStorage.getItem('token')}
+            axios.get("/users/checklogin",{
+                params: param
+            }).then(response => {
                 let res = response.data;
                 if(res.status == 1){
                     this.$store.commit("updateFlag", null);
@@ -100,13 +106,100 @@ export default {
 				if (res.status == 0) {
                     this.$store.commit("updateFlag", null);
                     this.$store.commit("updateAvatar", "");
+                    this.$store.commit("setUserID", "")
+                    this.$store.commit("setFollowersFans",{ followers: [] , fans: [] })
+                    localStorage.removeItem('token')
+                    this.$router.go(0);
 				}
 			});
 		},
         setrouter(){
             this.activeIndex = this.$route.path
             
+        },
+        openDialog() {
+            this.$emit('open')
+        },
+        opendialog(){
+			this.$refs.child.loginStatus = 'login'
+			this.$store.commit('showDialog',true) 
+        },
+        openRegist(){
+			this.$refs.child.loginStatus = 'regist'
+			this.$store.commit('showDialog',true) 
+        },
+		closeDialog(){
+			//关闭后清空表单和验证
+			if(this.$refs.regist.$refs.loginFormData){
+			    
+				this.$refs.regist.$refs.loginFormData.resetFields();
+				this.$refs.regist.$refs.loginFormData.clearValidate()
+				
+			}    
+			this.$store.commit('showDialog',false)
+        },
+        search(){
+            this.$router.push({ path: '/search', query: { query: this.query }})
+        },
+        tolikes(){
+            this.$router.push( {path:  `/user/${this.$store.state.userID}/likes`, params: { userid: this.$store.state.userID }})
         }
     }
 }
 </script>
+<style lang="scss">
+.user {
+    margin: 0 auto;
+    font-size: 15px;
+    line-height: 30px;
+    cursor: pointer;
+    &:hover{
+        background-color: #f3f3f3;
+    }    
+}  
+
+.activeClass{
+    color: #409EFF!important;
+}
+.head{
+    display: flex;
+    margin: 0 auto;
+    max-width: 960px;
+    width: 100%;
+    justify-content: space-between;
+    
+    .nav{
+        align-items: center;
+        display: flex;
+        margin-left: 10px;
+    
+        .nav-item{
+            display: block;
+            margin-right: 10px; 
+            color: #909399;
+            cursor: pointer;
+            &:hover{
+                color: #409EFF;
+            }
+            
+        }
+        
+    }
+    .action{
+        display: flex;
+        margin-right: 10px;
+        align-items: center;
+        justify-content: flex-end;
+        flex-direction: row;
+        .action-item{
+            cursor: pointer;
+            color: #409EFF;
+            margin: 0 10px; 
+        }
+        
+        
+        
+    }
+      
+}
+</style>

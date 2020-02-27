@@ -1,120 +1,125 @@
 <template>
-    <div>
-        <nav-header></nav-header>
-        <el-row>
-            <el-col :span="16" :offset="3" :xs="{span:24,offset:0}">
-                <div class="article">
-                    <el-card class="box-card article-card">
-                        <h2>{{article.articleTitle}}</h2>
-                        <span class="authormsg">作者：Node&emsp;{{article.articleTime}}&emsp;阅读 {{article.articleClick}}
-                        </span>
-                        <!-- <div v-html="article.articleContent"></div>  -->
-                        <mavon-editor class="content" :ishljs="prop.ishljs" :subfield="prop.subfield"
-                            :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :defaultOpen="prop.defaultOpen"
-                            :previewBackground="prop.previewBackground" v-model="article.articleContent" />
-                    </el-card>
-                </div>
-            </el-col>
-            <el-col :span="5" :xs="{span:0}">
-                <nav-aside></nav-aside>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="16" :offset="3" :xs="{span:24,offset:0}">
-                <comment></comment>
-            </el-col>
-        </el-row>
-        <nav-footer></nav-footer>
-    </div>
+	<div>
+        <nav-header />
+		<el-row class="row">
+			<el-col style="margin-top: 20px">
+				<el-card class="box-card article-card">
+					<div v-title :data-title="article.articleTitle">
+						<span class="authormsg">
+							作者：
+							<span class="author" @click="toUser(article.articleAuthor)">
+								{{
+								article.articleAuthor
+								}}
+							</span>
+							&emsp;{{ article.articleTime }}&emsp;阅读
+							{{ article.articleClick }}
+						</span>
+						<h1>{{ article.articleTitle }}</h1>
+					</div>
+					<mavon-editor
+						style="box-shadow: none"
+						class="content"
+						:ishljs="true"
+						:subfield="prop.subfield"
+						:toolbarsFlag="prop.toolbarsFlag"
+						:editable="prop.editable"
+						:defaultOpen="prop.defaultOpen"
+						:previewBackground="prop.previewBackground"
+						v-model="article.articleContent"
+					/>
+				</el-card>
+			</el-col>
+		</el-row>
+		<el-row class="comment">
+			<el-col>
+				<comment></comment>
+			</el-col>
+		</el-row>
+        <nav-footer />
+	</div>
 </template>
 <script>
-    import axios from "axios";
-    import NavHeader from "@/components/NavHeader.vue";
-    import NavFooter from "@/components/NavFooter.vue";
-    import NavAside from "@/components/NavAside.vue";
-    import Comment from "@/components/Comment.vue";
+import NavAside from "@/components/NavAside.vue";
+import Comment from "@/components/Comment.vue";
 
-
-    let marked = require("marked");
-    let hljs = require("highlight.js");
-    import "highlight.js/styles/default.css";
-
-    marked.setOptions({
-        renderer: new marked.Renderer(),
-        gfm: true,
-        tables: true,
-        breaks: true,
-        pedantic: false,
-        sanitize: false,
-        smartLists: true,
-        smartypants: false,
-        highlight: function (code, lang) {
-            if (lang && hljs.getLanguage(lang)) {
-                return hljs.highlight(lang, code, true).value;
-            } else {
-                return hljs.highlightAuto(code).value;
-            }
-        }
-    });
-
-    export default {
-        components: {
-            NavHeader,
-            NavAside,
-            NavFooter,
-            Comment
-        },
-        data() {
-            return {
-                article: []
-            };
-        },
-        computed: {
-            prop() {
-                let data = {
-                    subfield: false, //单栏
-                    defaultOpen: 'preview', //预览
-                    editable: false, //不可编辑
-                    ishljs: true, //代码高亮
-                    toolbarsFlag: false, //不显示工具栏
-                    previewBackground: '#ffffff'
+export default {
+	components: {
+		NavAside,
+        Comment,
+	},
+	data() {
+		return {
+			article: []
+		};
+	},
+	computed: {
+		prop() {
+			let data = {
+				subfield: false, //单栏
+				defaultOpen: "preview", //预览
+				editable: false, //不可编辑
+				toolbarsFlag: false, //不显示工具栏
+				previewBackground: "#ffffff"
+			};
+			return data;
+		}
+	},
+	mounted() {
+		this.getArticle();
+	},
+	methods: {
+		getArticle() {
+			var articleID = this.$route.query.articleID;
+			axios
+				.post("/users/articleContent", {
+					articleID: articleID
+				})
+				.then(response => {
+					let res = response.data;
+					if (res.status == 0) {
+						this.article = res.result.article;
+					}
+				});
+		},
+		toUser(param) {
+            axios.post('/index/name2id', { authorName: param }).then(response => {
+                let res = response.data
+                if(res.status === '1') {
+                    let id = res.result.authorID
+                    this.$router.push(`/user/${id}/articles`);
                 }
-                return data;
-            }
-        },
-        mounted() {
-            this.getArticle();
-        },
-        methods: {
-            getArticle() {
-                var articleID = this.$route.query.articleID;
-                axios
-                    .post("/users/articleContent", {
-                        articleID: articleID
-                    })
-                    .then(response => {
-                        let res = response.data;
-                        if (res.status == 0) {
-                            // res.result.article.articleContent = marked(res.result.article.articleContent || '');
-                            this.article = res.result.article
-
-                        }
-                    });
-            }
+            })
         }
-    };
-
+	},
+	directives: {
+		title: {
+			//生命周期 update: 被绑定与元素所在模板更新时调用，而且无论绑定值是否有变化，通过比较更新前后的绑定值，忽略不必要的模板更新
+			update(el) {
+				document.title = el.dataset.title;
+			}
+		}
+	}
+};
 </script>
-<style scoped>
-    .content {
-        width: 99%;
-        margin-top: 20px;
-        z-index: 90;
-    }
-
-    .authormsg {
-        font-size: 13px;
-        color: grey;
-    }
-
+<style lang="scss" scoped>
+.content {
+	margin-top: 20px;
+	z-index: 90;
+}
+.author {
+	color: black;
+	cursor: pointer;
+	&:hover {
+		color: grey;
+	}
+}
+.authormsg {
+	font-size: 13px;
+	color: grey;
+}
+.comment {
+	max-width: 960px;
+	margin: 0 auto;
+}
 </style>

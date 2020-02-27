@@ -4,28 +4,25 @@
 			<div>
 				<i class="el-icon-chat-dot-round">&nbsp;评论</i>
 			</div>
-			<br />
-			<el-row>
-				<el-col :xs="4" :sm="3" :md="3" :lg="2">
-					<el-avatar :size="50" :src="avatarUrl"></el-avatar>
-				</el-col>
-				<el-col :xs="18" :sm="19" :md="19" :lg="20">
+
+			<div class="avatar-input">
+				<div>
+					<el-avatar :size="60" :src="avatarUrl"></el-avatar>
+				</div>
+				<div class="input-content">
 					<el-input v-model="inputContent" type="textarea" :autosize="{ minRows: 4}" placeholder="请输入内容"></el-input>
-				</el-col>
-			</el-row>
-			<br />
-			<el-row>
-				<el-col :xs="{offset:12}" :sm="{offset:15}" :md="{offset:20}" :lg="1">
-					<div style="width:70px;" class="el-button el-button--text">
-						<router-link to="/login" v-show="!isLogin">登录</router-link>
-					</div>
-					<el-button
-						type="primary"
-						v-bind:class="{ 'is-disabled' : !( isLogin && inputContent) }"
-						@click="publish(null)"
-					>发布</el-button>
-				</el-col>
-			</el-row>
+				</div>
+			</div>
+			<div class="publish-btn">
+				<div style="width:70px;" class="el-button el-button--text">
+					<router-link to="/login" v-show="!isLogin">登录</router-link>
+				</div>
+				<el-button
+					type="primary"
+					v-bind:class="{ 'is-disabled' : !( isLogin && inputContent) }"
+					@click="publish(null)"
+				>发布</el-button>
+			</div>
 			<el-divider></el-divider>
 			<el-row>
 				<el-col>
@@ -34,88 +31,88 @@
 							class="sort-default"
 							@click="changeSort(0);getComment(sortFlag)"
 							v-bind:class="{'sort':sortFlag == 0}"
-						>按时间↑</span>
+						>按时间 ↑</span>
 						<el-divider direction="vertical"></el-divider>
 						<span
 							class="sort-default"
 							type="text"
 							@click="changeSort(1);getComment(sortFlag)"
 							v-bind:class="{'sort':sortFlag == 1}"
-						>按时间↓</span>
+						>按时间 ↓</span>
 					</div>
 				</el-col>
 			</el-row>
 			<br />
-			<div v-for="item in commentContent" v-if="!item.parentComment">
-				<el-row>
-					<el-col :push="1" :span="2" :xs="{push:0}">
-						<el-avatar :size="40" :src="item.authorAvatarUrl"></el-avatar>
-					</el-col>
-					<el-col :push="1" :span="20" :xs="{push:2}">
-						<span class="name">{{item.authorName}}：</span>
-						<span class="comment-content">{{ item.commentContent }}</span>
-					</el-col>
-				</el-row>
-				<el-row>
-					<el-col :push="3" :span="2" :xs="{push:1,span:4}">
-						<p>
+			<div v-for="item in commentContent" v-if="!item.parentComment" class="comment-list">
+				<div>
+					<el-avatar :size="40" :src="item.authorAvatarUrl"></el-avatar>
+				</div>
+				<div class="avatar-right">
+					<div>
+						<span class="name">{{item.authorName}}</span>
+						<div class="comment-content">{{ item.commentContent }}</div>
+					</div>
+					<div class="time-anwser">
+						<div>
 							<span class="time">{{ item.commentTime }}</span>
-						</p>
-					</el-col>
-					<el-col :push="20" :span="2" :xs="{push:17,span:6}">
-						<p>
-							<span class="answerlike" @click="toggle(item.commentID)">回复</span>
-						</p>
-					</el-col>
-				</el-row>
-				<el-row v-show="(item.commentID == currentID)">
-					<el-col :push="3">
-						<div class="add-child-comment">
-							<el-input v-model="childInput" style="width: 80%;" placeholder="请输入内容"></el-input>
-							<el-button type="primary" style="width: 18%;" @click="publish(item.commentID)" v-bind:class="{ 'is-disabled' : !childInput }">评论</el-button>
 						</div>
-					</el-col>
-				</el-row>
-				<br />
-				<el-row
-					v-for="(child,key) in commentContent"
-					v-if="child.parentComment == item.commentID"
-					:key="key"
-				>
-					<el-col :push="1">
-						<el-card class="child-comment" shadow="never">
-							<br />
-							<el-row>
-								<el-col :push="1" :span="22">
-									<span class="child-name">{{child.authorName}}：</span>
-									<span class="child-content">{{ child.commentContent }}</span>
-								</el-col>
-							</el-row>
-							<el-row>
-								<el-col :push="1" :span="3" :xs="{span:6}">
-									<p>
-										<span class="child-time">{{child.commentTime}}</span>
-									</p>
-								</el-col>
-								<el-col :push="20" :span="2" :xs="{push:16}">
-									<p>
-										<span class="child-anwser" @click="toggle(child.commentID)">回复</span>
-									</p>
-								</el-col>
-								<el-row v-show="(child.commentID == currentID)">
-								<el-col :push="1">
-									<div class="add-grandchild-comment">
-										<el-input v-model="childInput" style="width: 80%;" placeholder="请输入内容"></el-input>
-										<el-button type="primary" style="width: 18%;" @click="publish(item.commentID)" v-bind:class="{ 'is-disabled' : !childInput }">评论</el-button>
+						<div>
+							<span class="answerlike" @click="toggle(item.commentID)">回复</span>
+						</div>
+					</div>
+					<div class="add-child-comment" v-show="(item.commentID == currentID)">
+						<div class="add-child-comment-content">
+							<el-input v-model="childInput" placeholder="请输入内容"></el-input>
+							<div style="float:right">
+								<el-button
+									type="primary"
+									style="margin-top:10px"
+									@click="publish(item.commentID)"
+									v-bind:class="{ 'is-disabled' : !childInput }"
+								>评论</el-button>
+							</div>
+						</div>
+					</div>
+					<!-- - ----------------------------------子评论--------------------------------------- -->
+					<div class="child-all-comment">
+						<div
+							v-for="(child,key) in commentContent"
+							v-if="child.parentComment == item.commentID"
+							:key="key"
+							class="child-list"
+						>
+							<div class="child-list-content">
+								<div class="child-avatar">
+									<el-avatar :size="40" :src="item.authorAvatarUrl"></el-avatar>
+								</div>
+								<div style="width:100%;margin-right:20px">
+									<div class="child-name">{{child.authorName}}</div>
+									<div class="child-content">{{ child.commentContent }}</div>
+									<div class="time-anwser">
+										<div class="child-time">{{child.commentTime}}</div>
+										<div class="child-anwser" @click.stop="toggle(child.commentID)">回复</div>
 									</div>
-								</el-col>
-				</el-row>
-							</el-row>
-							<!-- </div> -->
-						</el-card>
-					</el-col>
-				</el-row>
-				<br />
+									<div v-show="(child.commentID == currentID)">
+										<div class="add-grandchild-comment">
+											<div class="add-grandchild-comment-content">
+												<el-input v-model="childInput" placeholder="请输入内容"></el-input>
+												<div style="float:right">
+													<el-button
+														type="primary"
+														@click="publish(item.commentID)"
+														v-bind:class="{ 'is-disabled' : !childInput }"
+														style="margin-top: 10px"
+													>评论</el-button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<el-divider></el-divider>
+				</div>
 			</div>
 		</el-card>
 	</div>
@@ -135,13 +132,16 @@ export default {
 	},
 	methods: {
 		toggle(id) {
-			//第一次点回复 cId 等于传进来的id ，再点同一个回复，cId置空         
+			//第一次点回复 cId 等于传进来的id ，再点同一个回复，cId置空
 			if (id == this.currentID) {
 				this.currentID = "";
-				
-				return;
+			} else {
+				this.currentID = id;
+				this.childInput = "";
 			}
-			this.currentID = id;
+		},
+		losefocus(id) {
+			this.currentID = "";
 			this.childInput = "";
 		},
 		getComment(sort) {
@@ -159,7 +159,7 @@ export default {
 				});
 		},
 		publish(parentID) {
-			if(this.$store.state.user){
+			if (this.$store.state.user) {
 				let articleID = this.$route.query.articleID;
 				let commentContent = this.inputContent;
 				let parentComment = parentID;
@@ -182,9 +182,11 @@ export default {
 							this.getComment();
 						}
 					});
-			}else{
-				this.$message('您还没有登录，无法评论！');
+			} else {
+				this.$message("您还没有登录，无法评论！");
 			}
+			this.currentID = "";
+			this.childInput = "";
 		},
 		changeSort(sort) {
 			this.sortFlag = sort;
@@ -209,6 +211,22 @@ export default {
 <style scoped>
 </style>
 <style>
+.comment-list {
+	display: flex;
+	margin: 20px;
+}
+.avatar-input {
+	display: flex;
+	margin: 30px 0;
+}
+.input-content {
+	margin-left: 10px;
+	width: 100%;
+}
+.publish-btn {
+	display: flex;
+	justify-content: flex-end;
+}
 .answerlike {
 	color: darkblue;
 	font-size: 13px;
@@ -220,18 +238,29 @@ export default {
 	cursor: pointer;
 }
 .sort {
-	font-size: 16px;
+	font-size: 13px;
 	color: #eb7350;
 	cursor: pointer;
 }
 .name {
 	color: darkblue;
-	font-size: 16px;
+	font-size: 18px;
 }
 .comment-content {
 	line-height: 25px;
+	margin: 10px 0;
 }
-
+.avatar-right {
+	width: 100%;
+	margin: 0 20px;
+	word-wrap: break-word; /*文字超出换行 */
+	word-break: break-all;
+	overflow: hidden;
+}
+.time-anwser {
+	display: flex;
+	justify-content: space-between;
+}
 
 .time {
 	color: darkblue;
@@ -244,7 +273,6 @@ export default {
 	cursor: pointer;
 }
 
-
 .child-time {
 	color: darkblue;
 	font-size: 12px;
@@ -254,10 +282,11 @@ export default {
 	color: black;
 	font-size: 14px;
 	line-height: 25px;
+	margin: 10px 0;
 }
-.child-name{
-    color: darkblue;
-    font-size: 16px;
+.child-name {
+	color: darkblue;
+	font-size: 16px;
 }
 .clearfix:before,
 .clearfix:after {
@@ -274,7 +303,7 @@ export default {
 	font-size: 14px;
 	color: darkgray;
 	margin: 0 auto;
-	width: 83%;
+
 	/* height: 250px; */
 	/* overflow: hidden;   自动隐藏文字 */
 	/*         
@@ -282,17 +311,44 @@ export default {
         text-overflow: ellipsis; */
 }
 .add-child-comment {
-	background-color: #dcdfe6;
-	width: 82%;
-	height: 50px;
-	padding-top: 10px;
-	padding-left: 10px;
+	background-color: #ebebeb;
+	width: 100%;
+	height: 120px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 10px;
+}
+.add-child-comment-content {
+	width: 100%;
+	margin: 0 10px;
 }
 .add-grandchild-comment {
 	background-color: #dcdfe6;
-	width: 95%;
-	height: 50px;
-	padding-top: 10px;
-	padding-left: 10px;
+	width: 100%;
+	height: 120px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 10px;
+}
+.add-grandchild-comment-content {
+	width: 100%;
+	margin: 0 10px;
+}
+.child-all-comment {
+	background-color: #fafbfc;
+	margin-top: 20px;
+}
+.child-list {
+	border-bottom: 1px solid #ebebeb;
+	padding: 15px 0;
+}
+.child-list-content {
+	display: flex;
+	padding: 0 10px;
+}
+.child-avatar {
+	margin-right: 10px;
 }
 </style>

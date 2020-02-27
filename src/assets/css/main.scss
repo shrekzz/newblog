@@ -18,6 +18,57 @@ a {
   body {
     background: #f0f0f0;
     min-height: 100%;
+    font-family: 'Microsoft YaHei';
+  }
+  .row{
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+    min-height: 90vh;
+  }
+  .register-card{
+      margin-top: 10px; 
+      width: 90%;
+      .el-input{
+          border-radius: 2px;
+          
+      }
+      .el-button{
+          width: 100%;
+          
+      }
+  }
+  .formmodal{
+	  text-align: center;
+	  .el-dialog{
+		 width: 320px;
+	  }
+	  .el-button{
+          width: 100%;
+          
+	  }
+	  .noaccount{
+		    font-size: 14px;
+			font-weight: 500;
+			padding: 0;
+			display: -webkit-inline-box;
+			display: -ms-inline-flexbox;
+			display: inline-flex;
+			-webkit-box-orient: horizontal;
+			-ms-flex-direction: row;
+			flex-direction: row;
+			-webkit-box-align: center;
+			-ms-flex-align: center;
+			align-items: center;
+			-webkit-box-pack: center;
+			-ms-flex-pack: center;
+			justify-content: center;
+			vertical-align: middle;
+			position: relative;
+			outline: 0;
+			padding: 0;
+	  }
+	 
   }
   .login {
     height: 100%;
@@ -31,6 +82,7 @@ a {
         line-height: 20px;
       }
     }
+    
     form {
       width: 320px;
       position: absolute;
@@ -77,6 +129,7 @@ a {
       line-height: 1.5em;
       margin: 0;
     }
+      margin: 10px 0;
   }
   .text-group {
     height: 362px;
@@ -110,12 +163,16 @@ a {
     height: 100px;
     line-height: 100px;
     text-align: center;
+    
   }
+  .el-icon-plus:before{
+      line-height: 100px;
+    }
   .savebtn {
     text-align: center;
   }
   .editor {
-    width: 99%;
+    width: 100%;
     height: 70vh;
     z-index: 999;
   }
@@ -124,6 +181,9 @@ a {
     top: 0;
     z-index: 2000;
     width: 100%;
+    background-color: white;
+    height: 60px;
+    display: flex;
   }
   .empty {
     width: 100%;
@@ -153,13 +213,22 @@ a {
     &:hover {
       color: #183d8e;
     }
+  .edit a {
+      font-size: 13px;
+      color: grey;
+  }
+  .edit a:hover {
+      font-size: 13px;
+      color: #409eff;
+  }
   }
   .box-card {
-    min-height: 200px;
+    min-height: 180px;
     font-size: 16px;
-    margin: 10px;
+    // margin: 10px;
     p {
       font-size: 14px;
+
     }
   }
   .el-menu-demo {
@@ -167,6 +236,6 @@ a {
     text-align: center;
   }
   .article-card {
-    min-height: 500px;
+    min-height: 85vh;
   }
   
