@@ -9,8 +9,8 @@
         >
             <el-row>
                 <el-col class="user-avatar" :span="22">
-                    <avatar :src="item.authorAvatarUrl" :size="50" />
-                    <span class="user-name">{{ item.authorName }}</span>
+                    <el-avatar :src="item.authorAvatarUrl" :size="50" />
+                    <span class="user-name">{{ item.authorName }}</span> 
                 </el-col>
                 <el-col class="follow" :span="2" v-if="item.authorID !== userID">
                     <el-button
