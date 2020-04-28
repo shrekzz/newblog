@@ -6,8 +6,10 @@
                 <el-card class="box-card" style="margin:10px;min-height:50vh">
                     <h2>关于博客</h2>
                     <div>
+                        我是shrekz。
+                        <br/>
                         本博客主要分享Node.js和前端技术，希望和大家共同成长。
-                        <br>
+                        
                     </div>
                     <div style="margin-top:10px">
                         GitHub地址：<el-link href="https://github.com/shrekzz/" target="_blank" type="primary"
